@@ -40,7 +40,8 @@ function App({demo = false}: PropsType) {
             <Container fixed>
                 <Routes>
                     <Route path={'/'} element={<TodolistsList/>}/>
-                    <Route path={'/'} element={<Login/>}/>
+                    <Route path={'/login'} element={<Login/>}/>
+                    <Route path='*' element={<h1>404: PAGE NOT FOUND</h1>} />
                 </Routes>
 
             </Container>
