@@ -2,10 +2,11 @@ import {authApi, LoginParamsType} from "../../api/todolists-api";
 
 import {Dispatch} from 'redux'
 import {SetAppErrorActionType, setAppStatusAC, SetAppStatusActionType} from '../../app/app-reducer'
-import {handleServerAppError} from "../../utils/error-utils";
+import {handleServerAppError, handleServerNetworkError} from "../../utils/error-utils";
 
 const initialState = {
     isLoggedIn: false
+
 }
 type InitialStateType = typeof initialState
 
@@ -34,16 +35,29 @@ export const loginTC = (data: LoginParamsType
               handleServerAppError(res.data, dispatch)
             }
         })
-}
-
-export const initializeAppTC = () => (dispatch: Dispatch) => {
-    authApi.me().then(res => {
-        debugger
-        if (res.data.resultCode === 0) {
-            dispatch(setIsLoggedInAC(true));
-        }
+        .catch((error)=> {
+        handleServerNetworkError(error, dispatch)
     })
 }
+
+export const logoutTC = (data: LoginParamsType
+) => (dispatch: Dispatch<ActionsType>) => {
+    dispatch(setAppStatusAC('loading'))
+    authApi.logout().then((res) => {
+        if (res.data.resultCode === 0) {
+            dispatch(setIsLoggedInAC(false))
+            dispatch(setAppStatusAC('succeeded'))
+        }
+        else {
+            handleServerAppError(res.data, dispatch)
+        }
+    })
+        .catch((error)=> {
+            handleServerNetworkError(error, dispatch)
+        })
+}
+
+
 
 
 
